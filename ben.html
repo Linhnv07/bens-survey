@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ben's Survey</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #f3e8ff;
+            margin: 0;
+        }
+
+        .slide {
+            display: none;
+            background: #e9d5ff;
+            padding: 30px;
+            border-radius: 15px;
+            width: 400px;
+            text-align: center;
+        }
+
+        .active {
+            display: block;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 15px 35px;        
+            font-size: 18px;           
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            background: #9333ea;
+            color: white;
+            transition: 0.3s;
+        }
+
+        button:disabled {
+            background: #d8b4fe;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        button.enabled {
+            background: #7e22ce;
+            box-shadow: 0 0 20px #c084fc;
+            transform: scale(1.05);
+        }
+
+        .options {
+            display: grid;
+            grid-template-columns: repeat(2, 100px);
+            gap: 20px;
+            justify-content: center;
+            margin: 0 auto;
+        }
+
+        .options img {
+            width: 100px;
+            height: 100px;
+            cursor: pointer;
+            border-radius: 12px;
+            border: 3px solid transparent;
+            transition: 0.3s;
+        }
+
+        .selected {
+            border: 3px solid #a855f7;
+            box-shadow: 0 0 20px #c084fc;
+            transform: scale(1.08);
+        }
+
+        input, textarea {
+            width: 90%;
+            padding: 8px;
+            margin-top: 10px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Slide 1 -->
+<div class="slide active" id="slide1">
+    <h1>Hello Ben!</h1>
+    <p>Welcome to your survey</p>
+    <button onclick="nextSlide(2)">Start</button>
+</div>
+
+<!-- Slide 2 -->
+<div class="slide" id="slide2">
+    <h2>Which one would you like Linh to make for you?</h2>
+    <div class="options">
+        <img src="chocochip.jpg" onclick="selectFood(this,'cookie')">
+        <img src="creampuff.jpg" onclick="selectFood(this,'creampuff')">
+        <img src="churro.webp" onclick="selectFood(this,'churro')">
+        <img src="bananabread.jpg" onclick="selectFood(this,'bananabread')">
+    </div>
+    <button id="foodNext" onclick="goNextFood()" disabled>Next</button>
+</div>
+
+<!-- Slide 3 -->
+<div class="slide" id="slide3">
+    <h2>Add Anything To Your Wishlist!</h2>
+    <p><a href="https://www.amazon.com" target="_blank"> Click here to Browse Amazon </a></p>
+    <input type="text" id="wishlist" placeholder="Write what you want" oninput="checkInput(this,'wishlistNext')">
+    <button id="wishlistNext" onclick="goNextWishlist()" disabled>Next</button>
+</div>
+
+<!-- Slide 4 -->
+<div class="slide" id="slide4">
+    <h2>Describe your dream date 😊</h2>
+    <textarea id="dreamDate" oninput="checkInput(this,'dateNext')"></textarea>
+    <button id="dateNext" onclick="goNextDate()" disabled>Next</button>
+</div>
+
+<!-- Slide 5 -->
+<div class="slide" id="slide5">
+    <h2>Pick your favorite picture!</h2>
+    <div class="options">
+        <img src="lando.webp" onclick="selectPic(this,'lando')">
+        <img src="paris.jpg" onclick="selectPic(this,'paris')">
+        <img src="physic.jpg" onclick="selectPic(this,'physic')">
+        <img src="nike.webp" onclick="selectPic(this,'nike')">
+    </div>
+    <button id="picNext" onclick="goNextPic()" disabled>Next</button>
+</div>
+
+<!-- Slide 6 -->
+<div class="slide" id="slide6">
+    <h2>Anything you want to let Linh know?</h2>
+    <textarea id="finalNote" oninput="checkInput(this,'finishBtn')"></textarea>
+    <button id="finishBtn" onclick="finishSurvey()" disabled>Finish</button>
+</div>
+
+<script>
+let answers = {};
+let selectedFood = null;
+let selectedPic = null;
+
+function nextSlide(num) {
+    document.querySelectorAll(".slide").forEach(s => s.classList.remove("active"));
+    document.getElementById("slide" + num).classList.add("active");
+}
+
+/* --- FOOD SLIDE --- */
+function selectFood(element, food) {
+    document.querySelectorAll("#slide2 img").forEach(img => img.classList.remove("selected"));
+    element.classList.add("selected");
+    selectedFood = food;
+
+    // Enable Next button
+    const btn = document.getElementById('foodNext');
+    btn.disabled = false;
+    btn.classList.add('enabled');
+}
+
+function goNextFood() {
+    answers.Food = selectedFood;
+    nextSlide(3);
+}
+
+/* --- WISHLIST SLIDE --- */
+function checkInput(el, btnId) {
+    const btn = document.getElementById(btnId);
+    if(el.value.trim() !== "") {
+        btn.disabled = false;
+        btn.classList.add('enabled');
+    } else {
+        btn.disabled = true;
+        btn.classList.remove('enabled');
+    }
+}
+
+function goNextWishlist() {
+    answers.Wishlist = document.getElementById('wishlist').value;
+    nextSlide(4);
+}
+
+/* --- DREAM DATE SLIDE --- */
+function goNextDate() {
+    answers.DreamDate = document.getElementById('dreamDate').value;
+    nextSlide(5);
+}
+
+/* --- PICTURE SLIDE --- */
+function selectPic(element, pic) {
+    document.querySelectorAll("#slide5 img").forEach(img => img.classList.remove("selected"));
+    element.classList.add("selected");
+    selectedPic = pic;
+
+    // Enable Next button
+    const btn = document.getElementById('picNext');
+    btn.disabled = false;
+    btn.classList.add('enabled');
+}
+
+function goNextPic() {
+    answers.FavoritePic = selectedPic;
+    nextSlide(6);
+}
+
+/* --- FINAL NOTE SLIDE --- */
+function finishSurvey() {
+    answers.Note = document.getElementById('finalNote').value;
+    answers.Timestamp = new Date().toLocaleString();
+
+    fetch("https://api.sheetbest.com/sheets/fc688151-8d21-4ad3-a181-8a1544f8f17a", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(answers)
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert("Survey submitted successfully!");
+        location.reload();
+    })
+    .catch(error => {
+        alert("There was an error submitting.");
+    });
+}
+</script>
+
+</body>
+</html>
